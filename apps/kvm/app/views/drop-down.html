@@ -1,0 +1,23 @@
+<div class="context-box" ng-show="username != 'admin'">
+    <div class="dropdown context-selection">
+        <button class="btn red-haze btn-sm dropdown-toggle" data-toggle="dropdown">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            <span class="context-overview">
+                <span>{{defaults}}</span>
+            </span>
+            <span class="caret"></span>
+        </button>
+        <div class="dropdown-menu">
+            <div class="context-lists">
+                <ul>
+                    <li class="dropdown-header">项目:</li>
+                    <li ng-repeat="(k,v) in projects">
+                        <a href="javascript:void(0);" ng-click="">
+                            {{v}}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

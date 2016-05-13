@@ -1,0 +1,43 @@
+<div class="context-box" ng-show="username != 'admin'">
+    <div class="dropdown context-selection">
+        <button class="btn red-haze btn-sm dropdown-toggle" data-toggle="dropdown">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            <span class="context-overview">
+                <span>{{defaults}}</span>
+            </span>
+            <span class="caret"></span>
+        </button>
+        <div class="dropdown-menu">
+            <div class="context-lists">
+                <ul>
+                    <li class="dropdown-header">项目：</li>
+                    <li ng-repeat="(k,v) in projects">
+                        <a href="javascript:void(0);" ng-click="initPage(k)">
+                            {{v}}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-cogs"></i>中细软云管理平台
+        </div>
+    </div>
+    <div class="portlet-body">
+        <div>
+			<table class="table table-bordered">
+				<h1>{{username}},欢迎光临中细软云平台</h1>
+			</table>
+		</div>
+    </div>
+</div>
+<div class="portlet-body" ng-show="username == 'admin'">
+    <div id="adminshow"></div>
+</div>
+<div class="portlet-body" ng-show="username != 'admin'">
+    <div id="partshow"></div>
+</div>

@@ -1,0 +1,32 @@
+<!-- BEGIN HEADER -->
+<div data-ng-include="'views/header.html'" data-ng-controller="HeaderCtrl" class="page-header navbar navbar-fixed-top">
+</div>
+<!-- END HEADER -->
+<div class="clearfix">
+</div>
+<!-- BEGIN CONTAINER -->
+<div class="page-container">
+    <!-- BEGIN SIDEBAR -->
+    <div data-ng-include="'views/sidebar.html'" data-ng-controller="SidebarCtrl" class="page-sidebar-wrapper">
+    </div>
+    <!-- END SIDEBAR -->
+    <div class="page-content-wrapper">
+        <div class="page-content-wrapper">
+            <div class="page-content">
+                <!-- BEGIN PAGE HEAD -->
+                <div data-ng-include="'views/page-head.html'" data-ng-controller="PageHeadCtrl" class="page-head">
+                </div>
+                <!-- END PAGE HEAD -->
+                <!-- BEGIN ACTUAL CONTENT -->
+                <div ui-view class="slide-down">
+                </div>
+                <!-- END ACTUAL CONTENT -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END CONTAINER -->
+<!-- BEGIN FOOTER -->
+<div data-ng-include="'views/footer.html'" data-ng-controller="FooterCtrl" class="page-footer">
+</div>
+<!-- END FOOTER -->

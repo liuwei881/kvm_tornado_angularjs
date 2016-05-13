@@ -1,0 +1,56 @@
+<div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="createForm">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">应用名称</label>
+                            <div class="col-md-9">
+                                <input type="text"
+                                       ng-pattern="/^[A-Za-z0-9]+$/"
+                                       ng-maxlength=30
+                                       name="appname"
+                                       appensure-unique="appname"
+                                       class="form-control input-inline input-medium" required placeholder="给应用起个名字..."
+                                       ng-model="item.AppName">
+                            </div>
+                            <div class="col-sm-offset-4 col-md-10" ng-show="createForm.appname.$invalid && createForm.appname.$dirty">
+                                <span ng-show="createForm.appname.$error.pattern" style="color:red">必须由数字和字母组成</span>
+                                <span ng-show="createForm.appname.$error.required" style="color:red">此处不能为空</span>
+                                <span ng-show="createForm.appname.$error.maxlength" style="color:red">不能多于30个字符</span>
+                                <span ng-show="createForm.appname.$error.unique" style="color:red">应用已存在</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">运行环境</label>
+                            <div class="col-sm-4">
+                                <select class="form-control input-inline input-medium"
+                                        ng-model="item.RunEnvironment" required>
+                                    <option value="128Mi">128MB</option>
+                                    <option value="256Mi">256MB</option>
+                                    <option value="512Mi">512MB</option>
+                                    <option value="1024Mi">1024MB</option>
+                                    <option value="2048Mi">2048MB</option>
+                                </select>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Save()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>

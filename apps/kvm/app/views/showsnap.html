@@ -1,0 +1,296 @@
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-cogs"></i>虚拟机快照
+        </div>
+    </div>
+
+    <div class="portlet-body">
+        <table class="table table-bordered">
+            <tbody>
+            <tr>
+                <th>快照名称</th>
+                <th>创建时间</th>
+                <th>是否自动创建</th>
+                <th>管理</th>
+            </tr>
+
+            <tr ng-repeat="o in rows">
+                <td>{{i.snapshot_name}}</td>
+                <td>{{i.create_time}}</td>
+                <td>{{i.auto_create}}</td>
+                <td>
+                    <button type="button" class="btn btn-primary btn-sm" data-close-others="true" ng-click="detail($index)">删除快照</button>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-primary btn-sm" data-close-others="true" ng-click="detail($index)">从此快照恢复</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <paging
+                class="small"
+                page="currentPage"
+                page-size="pageSize"
+                total="total"
+                adjacent="{{adjacent}}"
+                dots="{{dots}}"
+                scroll-top="{{scrollTop}}"
+                hide-if-empty="{{hideIfEmpty}}"
+                ul-class="{{ulClass}}"
+                active-class="{{activeClass}}"
+                disabled-class="{{disabledClass}}"
+                show-prev-next="{{showPrevNext}}"
+                paging-action="pageAction( page )">
+        </paging>
+    </div>
+</div>
+
+<script type="text/ng-template" id="add.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="createForm">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">选择云主机类型</label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big" ng-model="item.VirDisk" required>
+                                    <option>选择云主机类型</option>
+                                    <option value="2C_4G">2C_4G</option>
+                                    <option value="4C_8G">4C_8G</option>
+                                </select>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">选择操作系统</label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big"
+                                        ng-model="selected" ng-options="s.name for s in title.imageList">
+                                        <option value="">--选择操作系统--</option>
+                                </select>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">选择镜像</label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big"
+                                        ng-model="item.MirrorName" ng-options="sh.name for sh in selected.child">
+                                <option value="">--选择镜像--</option>
+                                </select>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">云主机用途</label>
+                            <div class="col-sm-4">
+                                <input type="text"
+                                       class="form-control input-inline input-big" required placeholder="云主机用途"
+                                       ng-model="item.CloudName">
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">加入项目</label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big"
+                                        ng-model="item.ProjectsName" ng-options="sh for sh in title.projectlist">
+                                <option value="">--选择项目--</option>
+                                </select>
+                                <span class="help-inline"></span>
+                                <font color="#FF0000">登录linux虚拟机需使用密钥登录，若没有密钥请到"虚拟机管理"--"访问&安全"创建密钥</font>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Save()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="edit.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">云主机用途</label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control input-inline input-medium" placeholder="云主机用途"
+                                       ng-model="item.CloudName">
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Save()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="start.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                           确定要启动{{ item.CloudName }}虚拟机？
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Start()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="stop.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                           确定要停止{{ item.CloudName }}虚拟机？
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Stop()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="reboot.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                           确定要重启{{ item.CloudName }}虚拟机？
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Reboot()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="delete.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                           确定要删除{{ item.CloudName }}虚拟机？
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Delete()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="createsnapshot.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                           确定要创建{{ item.CloudName }}快照？
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="CreateSnapshot()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>

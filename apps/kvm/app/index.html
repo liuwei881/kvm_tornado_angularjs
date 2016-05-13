@@ -1,0 +1,24 @@
+<!doctype html>
+<html class="no-js" ng-app="kvmApp">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="asserts/bootstrap/dist/css/bootstrap.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+</head>
+
+<body class="page-header-fixed page-sidebar-closed-hide-logo page-quick-sidebar-over-content page-container-bg-solid" ng-class="{'page-container-bg-solid': 'true', 'page-sidebar-closed': page-sidebar-closed}">
+<div ui-view></div>
+
+<script src="asserts/requirejs/require.js" data-main="scripts/main.js"></script>
+</body>
+</html>

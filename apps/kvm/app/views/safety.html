@@ -1,0 +1,155 @@
+<div class="context-box" ng-show="username != 'admin'">
+    <div class="dropdown context-selection">
+        <button class="btn red-haze btn-sm">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            <span class="context-overview">
+                <span>{{defaults}}</span>
+            </span>
+        </button>
+    </div>
+</div>
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-cogs"></i>密钥列表
+        </div>
+        <div class="tools">
+            <a class="glyphicon glyphicon-plus" href="javascript:;">
+            </a>
+            <button type="button" class="btn red-haze btn-sm" ng-click="Create();">创建kvm密钥
+            </button>
+        </div>
+    </div>
+
+    <div class="portlet-body">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <label>Filter:
+                    <input type="search" class="form-control input-large input-inline" placeholder="密钥名称或创建人" ng-model='searchKey'>
+                </label>
+                <a href="javascript:void(0);" ng-click="Search(searchKey)" class="btn btn-sm btn-primary">搜索</a>
+                <a href="javascript:void(0);" ng-click="Search('')" class="btn btn-sm btn-primary">重置</a>
+            </div>
+        </div>
+        <table class="table table-bordered">
+            <tbody>
+            <tr>
+                <th>密钥名称</th>
+                <th>创建人</th>
+                <th>创建时间</th>
+                <th>所属项目</th>
+                <th>管理</th>
+            </tr>
+
+            <tr ng-repeat="o in rows">
+                <td>{{ o.SecretkeyName }}</td>
+                <td>{{ o.CreatePerson }}</td>
+                <td>{{ o.CreateTime }}</td>
+                <td>{{ o.ProjectsName }}</td>
+                <td>
+                    <div class="btn-group">
+                        <a href="/keypairs/download/{{o.SecretkeyName}}">
+                        <button type="button" class="btn btn-primary btn-sm">下载密钥</button></a>
+                        <button type="button" class="btn btn-primary btn-sm" ng-click="Delete($index)">删除密钥</button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <paging
+                class="small"
+                page="currentPage"
+                page-size="pageSize"
+                total="total"
+                adjacent="{{adjacent}}"
+                dots="{{dots}}"
+                scroll-top="{{scrollTop}}"
+                hide-if-empty="{{hideIfEmpty}}"
+                ul-class="{{ulClass}}"
+                active-class="{{activeClass}}"
+                disabled-class="{{disabledClass}}"
+                show-prev-next="{{showPrevNext}}"
+                paging-action="pageAction( page )">
+        </paging>
+    </div>
+</div>
+
+ <script type="text/ng-template" id="add.html">
+     <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="createForm">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">请输入密钥名称</label>
+                            <div class="col-sm-4">
+                                <input type="text"
+                                       ng-pattern="/^[A-Za-z0-9_]+$/"
+                                       ng-maxlength=30
+                                       name="keyname"
+                                       appensure-unique="keyname"
+                                       class="form-control input-inline input-big" required placeholder="密钥名称不要重复"
+                                       ng-model="item.SecretkeyName">
+                            </div>
+                            <div class="col-sm-offset-4 col-md-10" ng-show="createForm.keyname.$invalid && createForm.keyname.$dirty">
+                                <span ng-show="createForm.keyname.$error.pattern" style="color:red">必须由数字和字母组成</span>
+                                <span ng-show="createForm.keyname.$error.required" style="color:red">此处不能为空</span>
+                                <span ng-show="createForm.keyname.$error.maxlength" style="color:red">不能多于30个字符</span>
+                                <span ng-show="createForm.keyname.$error.unique" style="color:red">密钥名称已存在</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">属于项目</label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big"
+                                        ng-model="item.ProjectsName" ng-options="sh for sh in title.projectlist">
+                                <option value="">--选择项目--</option>
+                                </select>
+                                <span class="help-inline"></span>
+                                <font color="#FF0000">描述:密钥是在启动时被注入到镜像中SSH的凭证.创建新的密钥，注册公钥并下载私钥.请妥善保管和使用SSH私钥</font>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Save()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="delete.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            确定要删除密钥{{item.SecretkeyName}}?
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Delete()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>

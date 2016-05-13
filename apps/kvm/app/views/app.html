@@ -1,0 +1,368 @@
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-cogs"></i>应用列表
+        </div>
+    </div>
+
+    <div class="portlet-body">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <label>Filter:
+                    <input type="search" class="form-control input-large input-inline" placeholder="AppName" ng-model='searchKey'>
+                </label>
+                <a href="javascript:void(0);" ng-click="Search(searchKey)" class="btn btn-sm btn-primary">搜索</a>
+                <a href="javascript:void(0);" ng-click="Search('')" class="btn btn-sm btn-primary">重置</a>
+            </div>
+        </div>
+        <table class="table table-bordered">
+            <tbody>
+            <tr>
+                <th>应用ID</th>
+                <th>应用名称</th>
+                <th>使用镜像</th>
+                <th>运行环境</th>
+                <th>运行状态</th>
+                <th>Replicas</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+
+            <tr ng-repeat="o in rows">
+                <td>{{ o.AppId }}</td>
+                <td>{{ o.AppName }}</td>
+                <td>{{ o.ImageName }}</td>
+                <td>{{ o.RunEnvironment }}</td>
+                <td>{{ o.Status }}</td>
+                <td>
+                    <input type="number" onkeyup="value=value.replace(/\D/g,'')" min="1" max="10" ng-model="o.Replicas" name="rc">
+                </td>
+                <td>{{ o.CreateTime }}</td>
+                <td>
+                    <div class="btn-group">
+                       <button type="button" class="btn btn-primary btn-sm" ng-click="detail($index)">查看</button>
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="javascript:void(0);" ng-click="Start($index)" >启动</a></li>
+                            <li><a href="javascript:void(0);" ng-click="Stop($index)">关闭</a></li>
+                            <li><a href="javascript:void(0);" ng-click="updateimage($index)">升级镜像</a></li>
+                            <li><a href="javascript:void(0);" ng-click="appdetail($index)">查看应用信息</a></li>
+                            <li><a href="javascript:;" ng-click="Delete($index)">删除</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a href="/api/v2/visit/{{ o.AppId }}">
+                       <button type="button" class="btn btn-primary btn-sm">web访问</button></a>
+                    </div>
+                    <div class="btn-group">
+                        <a href="javascript:;" ng-click="sendReq(o.AppId, o.Replicas)">
+                       <button type="button" class="btn btn-primary btn-sm">修改REPLICAS</button></a>
+                    </div>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+        <paging
+                class="small"
+                page="currentPage"
+                page-size="pageSize"
+                total="total"
+                adjacent="{{adjacent}}"
+                dots="{{dots}}"
+                scroll-top="{{scrollTop}}"
+                hide-if-empty="{{hideIfEmpty}}"
+                ul-class="{{ulClass}}"
+                active-class="{{activeClass}}"
+                disabled-class="{{disabledClass}}"
+                show-prev-next="{{showPrevNext}}"
+                paging-action="pageAction( page )">
+        </paging>
+    </div>
+</div>
+
+<script type="text/ng-template" id="detail.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">应用名称</label>
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{item.AppName}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">使用镜像</label>
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{item.ImageName}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">运行环境</label>
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{item.RunEnvironment}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">运行状态</label>
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{item.Status}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">端口</label>
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{item.NodePort}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">集群IP</label>
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{item.ClusterIp}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">节点IP</label>
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{item.NodeIp}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Replicas</label>
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{item.Replicas}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">创建用户</label>
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{item.CreateUser}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">创建时间</label>
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{item.CreateTime}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="updateimage.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">应用名称</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static" data-ng-bind-html="item.AppName">{{item.AppName}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">选择父镜像</label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-large"
+                                        ng-model="selected" ng-options="s.name for s in title.imageList">
+                                        <option value="">--请选择--</option>
+                                </select>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">选择子镜像</label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-large"
+                                        ng-model="item.ImageName" ng-options="sh.name for sh in selected.child">
+                                <option value="">--请选择--</option>
+                                </select>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Updateapp()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="appdetail.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">NameServer信息</label>
+                            <div class="col-md-8">
+                                <p class="form-control-static" data-ng-bind-html="item.NsInfo">{{item.NsInfo}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Replication信息</label>
+                            <div class="col-md-8">
+                                <p class="form-control-static" data-ng-bind-html="item.RcInfo">{{item.RcInfo}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Service信息</label>
+                            <div class="col-md-8">
+                                <p class="form-control-static" data-ng-bind-html="item.SeInfo">{{item.SeInfo}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="delete.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                           确定要删除{{ item.AppName }}应用？
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Delete()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="start.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                           确定要启动{{ item.AppName }}应用？
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Start()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="stop.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                           确定要停止{{ item.AppName }}项目？
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Stop()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>

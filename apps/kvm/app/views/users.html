@@ -1,0 +1,270 @@
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-cogs"></i>用户
+        </div>
+        <div class="tools">
+            <a class="glyphicon glyphicon-plus" href="javascript:;">
+            </a>
+            <button type="button" class="btn red-haze btn-sm" ng-click="Create();">新建
+            </button>
+        </div>
+    </div>
+
+    <div class="portlet-body">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <label>Filter:
+                    <input type="search" class="form-control input-large input-inline" placeholder="Search">
+                </label>
+                <a href="javascript:void(0);" ng-click="Search()" class="btn btn-success">搜索</a>
+            </div>
+        </div>
+        <table class="table table-bordered">
+            <tbody>
+            <tr>
+
+                <th>用户昵称</th>
+                <th>用户帐号</th>
+                <th>密码</th>
+                <th>邮箱</th>
+                <th>是否管理员</th>
+                <th>是否删除</th>
+                <th class="col-sm-2">操作</th>
+            </tr>
+
+            <tr ng-repeat="o in lstUsers">
+
+                <td>{{ o.NickName }}</td>
+                <td>{{ o.Account }}</td>
+                <td>{{ o.Password }}</td>
+                <td>{{ o.Email }}</td>
+                <td>{{ o.IsAdmin }}</td>
+                <td>{{ o.IsDelete }}</td>
+                <td>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary" ng-click="detail($index)">查看</button>
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="javascript:;" ng-click="edit($index)">编辑</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="javascript:;" ng-click="delete($index)">删除</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+        <paging
+                class="small"
+                page="currentPage"
+                page-size="pageSize"
+                total="total"
+                adjacent="{{adjacent}}"
+                dots="{{dots}}"
+                scroll-top="{{scrollTop}}"
+                hide-if-empty="{{hideIfEmpty}}"
+                ul-class="{{ulClass}}"
+                active-class="{{activeClass}}"
+                disabled-class="{{disabledClass}}"
+                show-prev-next="{{showPrevNext}}"
+                paging-action="pageAction( page )">
+        </paging>
+    </div>
+</div>
+<script type="text/ng-template" id="edit.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{title}}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户昵称</label>
+
+                            <div class="col-md-9">
+                                <input type="text" class="form-control input-inline input-medium" placeholder="用户昵称"
+                                       ng-model="item.NickName">
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户帐号</label>
+
+                            <div class="col-md-9">
+                                <input type="text" class="form-control input-inline input-medium" placeholder="用户帐号"
+                                       ng-model="item.Account">
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">密码</label>
+
+                            <div class="col-md-9">
+                                <input type="text" class="form-control input-inline input-medium" placeholder="密码"
+                                       ng-model="item.Password">
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">邮箱</label>
+
+                            <div class="col-md-9">
+                                <input type="text" class="form-control input-inline input-medium" placeholder="邮箱"
+                                       ng-model="item.Email">
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">是否管理员</label>
+
+                            <div class="col-md-9">
+                                <input type="text" class="form-control input-inline input-medium" placeholder="是否管理员"
+                                       ng-model="item.IsAdmin">
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">是否删除</label>
+
+                            <div class="col-md-9">
+                                <input type="text" class="form-control input-inline input-medium" placeholder="是否删除"
+                                       ng-model="item.IsDelete">
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Save()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="detail.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{title}}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户昵称</label>
+
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{ item.NickName }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户帐号</label>
+
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{ item.Account }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">密码</label>
+
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{ item.Password }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">邮箱</label>
+
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{ item.Email }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">是否管理员</label>
+
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{ item.IsAdmin }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">是否删除</label>
+
+                            <div class="col-md-9">
+                                <p class="form-control-static">{{ item.IsDelete }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </form>
+    </div>
+</script>

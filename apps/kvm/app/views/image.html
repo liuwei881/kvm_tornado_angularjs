@@ -1,0 +1,54 @@
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-cogs"></i>镜像仓库
+        </div>
+    </div>
+
+    <div class="portlet-body">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <label>Filter:
+                    <input type="search" class="form-control input-large input-inline" placeholder="ImageName" ng-model='searchKey'>
+                </label>
+                <a href="javascript:void(0);" ng-click="Search(searchKey)" class="btn btn-sm btn-primary">搜索</a>
+                <a href="javascript:void(0);" ng-click="Search('')" class="btn btn-sm btn-primary">重置</a>
+            </div>
+        </div>
+        <table class="table table-bordered">
+            <tbody>
+            <tr>
+                <th>镜像ID</th>
+                <th>镜像名称</th>
+                <th>操作</th>
+            </tr>
+
+            <tr ng-repeat="o in rows">
+                <td>{{ o.ImageId }}</td>
+                <td>{{ o.ImageName }}</td>
+                <td>
+                    <div class="btn-group">
+                       <button type="button" class="btn btn-primary btn-sm glyphicon glyphicon-plus" ng-click="addApp(o.ImageId)">创建应用</button>
+                    </div>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+        <paging
+                class="small"
+                page="currentPage"
+                page-size="pageSize"
+                total="total"
+                adjacent="{{adjacent}}"
+                dots="{{dots}}"
+                scroll-top="{{scrollTop}}"
+                hide-if-empty="{{hideIfEmpty}}"
+                ul-class="{{ulClass}}"
+                active-class="{{activeClass}}"
+                disabled-class="{{disabledClass}}"
+                show-prev-next="{{showPrevNext}}"
+                paging-action="pageAction( page )">
+        </paging>
+    </div>
+</div>

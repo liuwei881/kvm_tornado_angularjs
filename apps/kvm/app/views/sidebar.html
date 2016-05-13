@@ -1,0 +1,90 @@
+<div class="page-sidebar navbar-collapse collapse">
+    <ul class="page-sidebar-menu " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200"  ng-class="{'page-sidebar-menu-closed': false}">
+        <li class="start">
+            <a href="#/dashboard">
+                <i class="icon-home"></i>
+                <span class="title">Dashboard</span>
+            </a>
+        </li>
+        <li ng-show="username == 'admin'">
+            <a href="javascript:;">
+                <i class="icon-star"></i>
+                <span class="title">资产管理</span>
+            </a>
+            <ul class="sub-menu">
+                <li>
+                    <a href="#/assets">
+                        <i class="icon-fire"></i>
+                        <span class="title">物理机管理</span>
+                    </a>
+                </li>
+                <!--
+                <li>
+                    <a href="">
+                        <i class="icon-basket"></i>
+                        关闭所有主机
+                    </a>
+                </li>-->
+            </ul>
+        </li>
+        <li>
+            <a href="javascript:;">
+                <i class="icon-list"></i>
+                <span class="title">虚拟机管理</span>
+            </a>
+            <ul class="sub-menu">
+                <li>
+                    <a href="#/vms">
+                        <i class="icon-fire"></i>
+                        <span class="title">虚拟主机列表</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#/safety">
+                        <i class="icon-fire"></i>
+                        <span class="title">访问&安全</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a href="#/clouddisk">
+                <i class="icon-calendar"></i>
+                <span class="title">云硬盘管理</span>
+            </a>
+        </li>
+        <!--
+        <li>
+            <a ui-sref=".user" href="javascript:;">
+                <i class="icon-rocket"></i>
+                <span class="title">用户管理</span>
+            </a>
+        </li>-->
+        <li ng-show="username == 'admin'">
+            <a href="#/projects">
+                <i class="icon-lock"></i>
+                <span class="title">项目管理</span>
+            </a>
+        </li>
+        <li ng-show="username == 'admin'">
+            <a href="javascript:;">
+                <i class="icon-graph"></i>
+                <span class="title">图形趋势图</span>
+            </a>
+            <ul class="sub-menu">
+                <li>
+                    <a href="#/zclouddata">
+                        <i class="icon-fire"></i>
+                        <span class="title">zcloud数据库趋势</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#/kvmimage">
+                        <i class="icon-fire"></i>
+                        <span class="title">kvm镜像趋势</span>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>

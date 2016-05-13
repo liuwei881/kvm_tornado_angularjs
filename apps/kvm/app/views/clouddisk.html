@@ -1,0 +1,340 @@
+<div class="context-box" ng-show="username != 'admin'">
+    <div class="dropdown context-selection">
+        <button class="btn red-haze btn-sm">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            <span class="context-overview">
+                <span>{{defaults}}</span>
+            </span>
+        </button>
+    </div>
+</div>
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-cogs"></i>云硬盘管理
+        </div>
+        <div class="tools">
+            <a class="glyphicon glyphicon-plus" href="javascript:;">
+            </a>
+            <button type="button" class="btn red-haze btn-sm" ng-click="Create();">新建云硬盘
+            </button>
+        </div>
+    </div>
+
+    <div class="portlet-body">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <label>Filter:
+                    <input type="search" class="form-control input-large input-inline" placeholder="云硬盘名称" ng-model='searchKey'>
+                </label>
+                <a href="javascript:void(0);" ng-click="Search(searchKey)" class="btn btn-sm btn-primary">搜索</a>
+                <a href="javascript:void(0);" ng-click="Search('')" class="btn btn-sm btn-primary">重置</a>
+            </div>
+        </div>
+        <table class="table table-bordered">
+            <tbody>
+            <tr>
+                <th>编号</th>
+                <th>云硬盘名称</th>
+                <th>云硬盘大小</th>
+                <th>挂载位置</th>
+                <th>服务器ip</th>
+                <th>所属项目</th>
+                <th>操作</th>
+            </tr>
+
+            <tr ng-repeat="o in rows">
+                <td>{{ o.CloudDiskId }}</td>
+                <td>{{ o.ImageName }}</td>
+                <td>{{ o.CloudSize }}</td>
+                <td>{{ o.MountLocation }}</td>
+                <td>{{ o.IpInfo }}</td>
+                <td>{{ o.ProjectsName }}</td>
+                <td>
+                    <div class="btn-group">
+                        <div class="btn-group">
+                        <button type="button" class="btn btn-primary btn-sm" data-close-others="true" data-toggle="dropdown" ng-click="detail($index)">
+                            <span class="hidden-sm hidden-xs">操作</span>
+                            <i class="fa fa-angle-down"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="javascript:;" ng-click="mount($index)" ng-show="!o.MountLocation">云硬盘挂载</a></li>
+                            <li><a href="javascript:;" ng-click="umount($index)" ng-show="o.MountLocation">云硬盘卸载</a></li>
+                            <li><a href="javascript:;" ng-click="createdisksnap($index)">创建云硬盘快照</a></li>
+                            <li><a href="javascript:;" ng-click="showdisksnap(o.CloudDiskId)">查看云硬盘快照</a></li>
+                            <li><a href="javascript:;" ng-click="Delete($index)" ng-show="!o.MountLocation">删除云硬盘</a></li>
+                        </ul>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <paging
+                class="small"
+                page="currentPage"
+                page-size="pageSize"
+                total="total"
+                adjacent="{{adjacent}}"
+                dots="{{dots}}"
+                scroll-top="{{scrollTop}}"
+                hide-if-empty="{{hideIfEmpty}}"
+                ul-class="{{ulClass}}"
+                active-class="{{activeClass}}"
+                disabled-class="{{disabledClass}}"
+                show-prev-next="{{showPrevNext}}"
+                paging-action="pageAction( page )">
+        </paging>
+    </div>
+</div>
+
+<script type="text/ng-template" id="add.html">
+     <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="createForm">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">请输入镜像名称</label>
+                            <div class="col-sm-4">
+                                <input type="text"
+                                       ng-pattern="/^[A-Za-z0-9_]+$/"
+                                       ng-maxlength=30
+                                       name="imagename"
+                                       ensure-unique="imagename"
+                                       class="form-control input-inline input-big" required placeholder="镜像名称不要重复"
+                                       ng-model="item.ImageName">
+                            </div>
+                            <div class="col-sm-offset-4 col-md-10" ng-show="createForm.imagename.$invalid && createForm.imagename.$dirty">
+                                <span ng-show="createForm.imagename.$error.pattern" style="color:red">必须由数字和字母组成</span>
+                                <span ng-show="createForm.imagename.$error.required" style="color:red">此处不能为空</span>
+                                <span ng-show="createForm.imagename.$error.maxlength" style="color:red">不能多于30个字符</span>
+                                <span ng-show="createForm.imagename.$error.unique" style="color:red">镜像名称已存在</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">请选择镜像大小</label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big"
+                                        ng-model="item.CloudSize" required>
+                                    <option value="500">500G</option>
+                                    <option value="1024">1024G</option>
+                                    <option value="2048">2048G</option>
+                                    <option value="10240">10240G</option>
+                                </select>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">加入项目</label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big"
+                                        ng-model="item.ProjectsName" ng-options="sh for sh in title.projectlist">
+                                <option value="">--选择项目--</option>
+                                </select>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Save()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="mount.html">
+     <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="createForm">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">镜像名称</label>
+                            <div class="col-sm-4">
+                                <input type="text"
+                                       value="item.ImageName"
+                                       class="form-control input-inline input-big" required placeholder="item.ImageName"
+                                       ng-model="item.ImageName" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">挂载云服务器</label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big"
+                                        ng-model="item.MountLocation" ng-options="sh for sh in title.cloudnamelist">
+                                <option value="">--选择云服务器--</option>
+                                </select>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="mount()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="umount.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                           确定要卸载镜像<font color="#FF0000">{{ item.ImageName }}?</font>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="umount()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="createdisksnap.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="createForm">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">快照名称</label>
+                            <div class="col-sm-4">
+                                <input type="text"
+                                       ng-pattern="/^[A-Za-z0-9_]+$/"
+                                       ng-maxlength=30
+                                       name="snapname"
+                                       class="form-control input-inline input-big" required placeholder="请输入快照名称"
+                                       ng-model="item.SnapName">
+                            </div>
+                            <div class="col-sm-offset-4 col-md-10" ng-show="createForm.snapname.$invalid && createForm.snapname.$dirty">
+                                <span ng-show="createForm.snapname.$error.pattern" style="color:red">必须由数字和字母组成</span>
+                                <span ng-show="createForm.snapname.$error.required" style="color:red">此处不能为空</span>
+                                <span ng-show="createForm.snapname.$error.maxlength" style="color:red">不能多于30个字符</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="createdisksnap()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="showdisksnap.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+                <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>快照名称</th>
+                        <th>镜像大小</th>
+                        <th>创建时间</th>
+                        <th>宿主镜像</th>
+                        <th>管理</th>
+                    </tr>
+
+                    <tr ng-repeat="o in item">
+                        <td>{{o.SnapName}}</td>
+                        <td>{{o.SnapSize}}</td>
+                        <td>{{o.CreateTime}}</td>
+                        <td>{{o.ImageName}}</td>
+                        <td>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary btn-sm" data-close-others="true" data-toggle="dropdown" ng-click="detail($index)">
+                                    <span class="hidden-sm hidden-xs">操作</span>
+                                    <i class="fa fa-angle-down"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="/api/v2/clouddisk/delcloudsnap/{{o.SnapId}}/{{o.CloudDiskSnapId}}">删除快照</a></li>
+                                    <li><a href="/api/v2/clouddisk/recloudsnap/{{o.SnapId}}/{{o.CloudDiskSnapId}}">从此快照恢复</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="delete.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                           确定要删除<font color="#FF0000">{{ item.ImageName }}</font>云硬盘？
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Delete()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
